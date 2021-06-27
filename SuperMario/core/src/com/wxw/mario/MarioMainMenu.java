@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
@@ -40,9 +41,19 @@ public class MarioMainMenu implements Screen {
 //    TextureRegion playerTextureRegion = new TextureRegion("ArmyAtlas.png");
 
     public MarioMainMenu(final Mario gam) {
+
         game = gam;
+//        camera = new OrthographicCamera();
+//        camera.setToOrtho(false, 300, 200);
+
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+
+        // Constructs a new OrthographicCamera, using the given viewport width and height
+        // Height is multiplied by aspect ratio.
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
+
+        camera.setToOrtho(false, 400, 500);
 
 
         for (int i = 0; i < 1000; i++) {
@@ -66,11 +77,8 @@ public class MarioMainMenu implements Screen {
 
 
 
-
-
-
-
     }
+
 
 
     @Override
@@ -81,10 +89,12 @@ public class MarioMainMenu implements Screen {
     @Override
     public void render(float delta) {
 
-        ScreenUtils.clear(0, 0, 0.2f, 1);
-
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
+
+        ScreenUtils.clear(0, 0, 0.2f, 1);
+
+
         game.batch.begin();
 
         playerA.drop();
@@ -94,12 +104,17 @@ public class MarioMainMenu implements Screen {
                 playerA.runRight();
             else
             playerA.moveRight();
+
+
+
         }
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
                 playerA.runLeft();
             else
             playerA.moveLeft();
+
+
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
@@ -129,9 +144,13 @@ public class MarioMainMenu implements Screen {
 
     }
 
+
+
     @Override
     public void resize(int width, int height) {
-
+        camera.viewportWidth = 30f;
+        camera.viewportHeight = 30f * height/width;
+        camera.update();
     }
 
     @Override

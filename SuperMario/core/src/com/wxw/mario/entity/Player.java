@@ -1,6 +1,7 @@
 package com.wxw.mario.entity;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -102,6 +103,10 @@ public class Player extends Actor {
         TextureRegion currentFrame = (TextureRegion) walkAnimation.getKeyFrame(stateTime);
         setRegion(currentFrame);
         setX(getX() + 1);
+
+
+
+
     }
 
     public void runRight() {
