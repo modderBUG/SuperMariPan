@@ -38,32 +38,55 @@ public class Player extends Actor {
     public Float f = 0.05f;
     public char direction = 'R';
 
-
-    private TextureRegion run;
-    private TextureRegion walk;
-    private TextureRegion jump;
-    private TextureRegion squat;
+    private TextureRegion jumpTextureRegion;
+    private TextureRegion squatTextureRegion;
 
     private Animation walkAnimation;
     private Animation runAnimation;
     private Animation jumpAnimation;
 
     float stateTime;
-//    private TextureRegion currentFrame;
 
+    public void setWalkAnimation(TextureRegion[][] splitAnim){
+        TextureRegion[] walkRegion = new TextureRegion[3];
+        for (int i = 0; i < 3; i++) {
+            walkRegion[i] = splitAnim[0][i+1];
+        }
+        walkAnimation = new Animation(0.05f, walkRegion);
+        walkAnimation.setPlayMode(Animation.PlayMode.LOOP);
+    }
+
+    public void setRunAnimation(TextureRegion[][] splitAnim) {
+        TextureRegion[] runRegion = new TextureRegion[5];
+        for (int i = 0; i < 5; i++) {
+            runRegion[i] = splitAnim[0][i+16];
+        }
+        runAnimation = new Animation(0.05f, runRegion);
+        runAnimation.setPlayMode(Animation.PlayMode.LOOP);
+    }
+
+    public void setJumpAnimation(TextureRegion[][] splitAnim) {
+        TextureRegion[] jumpRegion = new TextureRegion[8];
+        for (int i = 0; i < 8; i++) {
+            jumpRegion[i] = splitAnim[0][i+7];
+        }
+        jumpAnimation = new Animation(0.05f, jumpRegion);
+        jumpAnimation.setPlayMode(Animation.PlayMode.LOOP);
+    }
 
     public Player(TextureRegion region) {
         super();
         this.region = region;
         splitAnim = region.split(17, 32);
 
-        TextureRegion[] walkRegion = new TextureRegion[3];
-        walkRegion[0] = splitAnim[0][1];
-        walkRegion[1] = splitAnim[0][2];
-        walkRegion[2] = splitAnim[0][3];
+        System.out.println("aaaaaaaaaaaaaaaaaaaaaaa" +  splitAnim[0].length);
 
-        walkAnimation = new Animation(0.05f, walkRegion);
-        walkAnimation.setPlayMode(Animation.PlayMode.LOOP);
+        setWalkAnimation(splitAnim);
+        setRunAnimation(splitAnim);
+        setJumpAnimation(splitAnim);
+        jumpTextureRegion = splitAnim[0][5];
+        squatTextureRegion = splitAnim[0][6];
+
 
         // 将演员的宽高设置为纹理区域的宽高（必须设置, 否则宽高默认都为 0, 绘制后看不到）
         setSize(region.getRegionWidth(), region.getRegionHeight());
@@ -146,7 +169,7 @@ public class Player extends Actor {
     }
 
     public void moveRight() {
-        playMoveAnimation(false);
+        playMoveAnimation(false,"walk");
         direction = 'R';
         maxSpeed = 1f;
         setToCurrentSpeed();
@@ -154,7 +177,7 @@ public class Player extends Actor {
     }
 
     public void runRight() {
-        playMoveAnimation(false);
+        playMoveAnimation(false,"run");
         direction = 'R';
         maxSpeed = 3f;
         setToCurrentSpeed();
@@ -162,7 +185,7 @@ public class Player extends Actor {
     }
 
     public void moveLeft() {
-        playMoveAnimation(true);
+        playMoveAnimation(true,"walk");
         direction = 'L';
         maxSpeed = -1f;
         setToCurrentSpeed();
@@ -170,37 +193,52 @@ public class Player extends Actor {
     }
 
     public void runLeft() {
-        playMoveAnimation(true);
+        playMoveAnimation(true,"run");
         direction = 'L';
         maxSpeed = -3f;
         setToCurrentSpeed();
     }
 
-    public void playMoveAnimation(boolean flip) {
+    public void playMoveAnimation(boolean flip,String action) {
         stateTime += Gdx.graphics.getDeltaTime();
         // 根据当前 播放模式 获取当前关键帧, 就是在 stateTime 这个时刻应该播放哪一帧
-        TextureRegion currentFrame = new TextureRegion((TextureRegion) walkAnimation.getKeyFrame(stateTime));
+
+        TextureRegion currentFrame = null;
+        if (action.equals("walk"))
+            currentFrame = new TextureRegion((TextureRegion) walkAnimation.getKeyFrame(stateTime));
+        if(action.equals("run"))
+            currentFrame = new TextureRegion((TextureRegion) runAnimation.getKeyFrame(stateTime));
+        if(action.equals("jump"))
+            currentFrame = new TextureRegion((TextureRegion) jumpAnimation.getKeyFrame(stateTime));
         currentFrame.flip(flip, false);
         setRegion(currentFrame);
 
     }
 
+    public void squat(){
+        setRegion(squatTextureRegion);
+    }
+
 
     public void jump() {
-        setRegion(splitAnim[0][5]);
+        setRegion(jumpTextureRegion);
         jumpHeight -= jumpHeight * 0.1;
         if (jumpHeight <= 0) return;
         setY(getY() + jumpHeight * 0.1f);
     }
 
     public void runJump() {
-        setRegion(splitAnim[0][5]);
+        playMoveAnimation(direction == 'L',"jump");
         jumpHeight -= jumpHeight * 0.1;
         if (jumpHeight <= 0) return;
         setY(getY() + jumpHeight * 0.12f);
     }
 
     public void handle() {
+
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            squat();
+        }
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
@@ -221,7 +259,6 @@ public class Player extends Actor {
             else
                 jump();
         }
-
 
         computeCurrent();
         drop();

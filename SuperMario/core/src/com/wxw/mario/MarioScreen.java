@@ -48,7 +48,7 @@ public class MarioScreen implements Screen {
         armyTexture     = manager.get(ResourceName.ENEMY);
         sceneryTexture  = manager.get(ResourceName.SCAN);
 
-        playerTextureRegion = new TextureRegion(playerTexture, 79, 1, 356, 49);
+        playerTextureRegion = new TextureRegion(playerTexture, 79, 0, 358, 49);
         sceneryTextureRegion = new TextureRegion(sceneryTexture, 96, 24, 16, 16);
 
         //cloudTextureRegion = new TextureRegion(sceneryTexture, 48, 144, 16, 16);
