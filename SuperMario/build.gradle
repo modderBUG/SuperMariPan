@@ -12,7 +12,7 @@ buildscript {
         classpath 'org.wisepersist:gwt-gradle-plugin:1.0.13'
         classpath 'org.gretty:gretty:3.0.2'
         classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.12'
-        
+
 
     }
 }
@@ -82,6 +82,8 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
+
+        compile files('src/resource/libs/App42MultiPlayerGamingSDK.jar')
     }
 }
 

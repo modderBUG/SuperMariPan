@@ -1,7 +1,6 @@
 package com.wxw.mario;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -17,7 +16,7 @@ public class Mario extends Game {
 		batch = new SpriteBatch();
 		// Use LibGDX's default Arial font.
 		font = new BitmapFont();
-		this.setScreen(new MarioScreen(this));
+		this.setScreen(new MarioMenu(this));
 	}
 
 	public void render() {

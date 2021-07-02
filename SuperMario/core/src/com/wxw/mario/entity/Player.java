@@ -1,11 +1,14 @@
 package com.wxw.mario.entity;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +24,19 @@ public class Player extends Actor {
 
     public int jumpStatus = 0;
     public int jumpHeight = 50;
+
     public int dropStatus = 1;
+
+    public Float maxDropSpeed = -15f;
+    public Float currentDropSpeed = -1f;
+    public Float gravity = 0.98f;
+
+
+    public Float maxSpeed = 3f;
+    public Float currentSpeed = 0f;
+    public Float accelerate = 0.1f;
+    public Float f = 0.05f;
+    public char direction = 'R';
 
 
     private TextureRegion run;
@@ -40,8 +55,6 @@ public class Player extends Actor {
     public Player(TextureRegion region) {
         super();
         this.region = region;
-
-
         splitAnim = region.split(17, 32);
 
         TextureRegion[] walkRegion = new TextureRegion[3];
@@ -51,17 +64,22 @@ public class Player extends Actor {
 
         walkAnimation = new Animation(0.05f, walkRegion);
         walkAnimation.setPlayMode(Animation.PlayMode.LOOP);
-        
+
         // 将演员的宽高设置为纹理区域的宽高（必须设置, 否则宽高默认都为 0, 绘制后看不到）
         setSize(region.getRegionWidth(), region.getRegionHeight());
+        setPosition(400, 400);
 
+    }
+
+    private void init(){
         setPosition(400, 480);
-
     }
 
     public TextureRegion getRegion() {
         return region;
     }
+
+
 
     public void setRegion(TextureRegion region) {
         this.region = region;
@@ -80,60 +98,94 @@ public class Player extends Actor {
         // 现在这里一般没有什么逻辑要处理
     }
 
-    public void drop() {
-        if (dropStatus == 0){
-            setRegion(splitAnim[0][0]);
+
+    // 走路摩擦
+    public void computeCurrent(){
+        if (currentSpeed>0.05) {
+            currentSpeed=currentSpeed  - f;
+            setX(getX() + currentSpeed);
+            if (currentSpeed>0.5&&direction=='L')
+                setRegion(splitAnim[0][4]);
             return;
         }
+        if (currentSpeed<-0.05) {
+            currentSpeed = currentSpeed + f;
+            setX(getX() + currentSpeed);
+            if (currentSpeed<-0.5&&direction=='R'){
+                setRegion(getFlip(splitAnim[0][4]));
+            }
+            return;
+        }
+        if (direction=='R')
+            setRegion(splitAnim[0][0]);
+        if (direction=='L')
+            setRegion(getFlip(splitAnim[0][0]));
+    }
 
+    public TextureRegion getFlip(TextureRegion textureRegion){
+        TextureRegion flipTextureRegion = new TextureRegion(textureRegion);
+        flipTextureRegion.flip(true,false);
+        return flipTextureRegion;
+    }
 
-        float g = ((getY() + 1000) / getY());
+    public void setToCurrentSpeed(){
+        if (direction=='R'){
+            if (maxSpeed>currentSpeed)
+                currentSpeed = currentSpeed + accelerate;
+            if (maxSpeed<currentSpeed)
+                currentSpeed = currentSpeed - accelerate;
+            setX(getX()+currentSpeed);
+        }
 
-        if (g > 15) g = 15;
-
-        float Y_ = getY() - g;
-
-        setRegion(splitAnim[0][5]);
-        setY(Y_);
+        if (direction=='L'){
+            if (maxSpeed<currentSpeed)
+                currentSpeed = currentSpeed - accelerate;
+            if (maxSpeed>currentSpeed)
+                currentSpeed = currentSpeed + accelerate;
+            setX(getX()+currentSpeed);
+        }
     }
 
     public void moveRight() {
-        stateTime += Gdx.graphics.getDeltaTime();
-        // 根据当前 播放模式 获取当前关键帧, 就是在 stateTime 这个时刻应该播放哪一帧
-        TextureRegion currentFrame = (TextureRegion) walkAnimation.getKeyFrame(stateTime);
-        setRegion(currentFrame);
-        setX(getX() + 1);
-
-
-
+        playMoveAnimation(false);
+        direction='R';
+        maxSpeed=1f;
+        setToCurrentSpeed();
 
     }
 
     public void runRight() {
-        stateTime += Gdx.graphics.getDeltaTime();
-        // 根据当前 播放模式 获取当前关键帧, 就是在 stateTime 这个时刻应该播放哪一帧
-        TextureRegion currentFrame = (TextureRegion) walkAnimation.getKeyFrame(stateTime);
-        setRegion(currentFrame);
-        setX(getX() + 3);
+        playMoveAnimation(false);
+        direction='R';
+        maxSpeed=3f;
+        setToCurrentSpeed();
+
     }
 
     public void moveLeft() {
-        stateTime += Gdx.graphics.getDeltaTime();
-        // 根据当前 播放模式 获取当前关键帧, 就是在 stateTime 这个时刻应该播放哪一帧
-        TextureRegion currentFrame = new TextureRegion((TextureRegion) walkAnimation.getKeyFrame(stateTime));
-        currentFrame.flip(true, false);
-        setRegion(currentFrame);
-        setX(getX() - 1);
+        playMoveAnimation(true);
+        direction='L';
+        maxSpeed=-1f;
+        setToCurrentSpeed();
+
     }
 
     public void runLeft() {
+        playMoveAnimation(true);
+        direction='L';
+        maxSpeed=-3f;
+        setToCurrentSpeed();
+    }
+
+    public void playMoveAnimation(boolean flip){
         stateTime += Gdx.graphics.getDeltaTime();
         // 根据当前 播放模式 获取当前关键帧, 就是在 stateTime 这个时刻应该播放哪一帧
-        TextureRegion currentFrame = new TextureRegion((TextureRegion) walkAnimation.getKeyFrame(stateTime));
-        currentFrame.flip(true, false);
+        TextureRegion  currentFrame = new TextureRegion((TextureRegion) walkAnimation.getKeyFrame(stateTime));
+        currentFrame.flip(flip, false);
         setRegion(currentFrame);
-        setX(getX() - 3);
+
     }
+
 
     public void jump() {
         setRegion(splitAnim[0][5]);
@@ -151,33 +203,99 @@ public class Player extends Actor {
         setY(getY() + jumpHeight * 0.12f);
     }
 
-    public void crash(float x, float y, float width, float height) {
+    public void handle() {
 
-        if ((getX() + getWidth() < x || x + width < getX() || getY() + getHeight() < y || y + height < getY())) return;
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
+                runRight();
+            else
+               moveRight();
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
+                runLeft();
+            else
+                moveLeft();
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
+                runJump();
+            else
+                jump();
+        }
 
 
 
+        drop();
+        computeCurrent();
 
-//        if (getX()<x){   // target on left
-//            if (getX()+getWidth()>x) setPosition(x-getWidth(),getY());
+        if (getX()<=20)
+            init();
+
+        if (getX()>=Gdx.graphics.getWidth())
+            setX(0);
+
+        if (getY()<0)
+            init();
+    }
+
+    public void drop() {
+        if (dropStatus == 0) {
+            return;
+        }
+        if (currentDropSpeed>maxDropSpeed)
+            currentDropSpeed = currentDropSpeed - gravity;
+        float Y_ = getY()+currentDropSpeed;
+        setRegion(splitAnim[0][5]);
+        setY(Y_);
+    }
+
+   public void   jumping(){
+
+    }
+
+
+
+    public void crash(Stage stage){
+        Array<Actor> actors = stage.getActors();
+        for (int i = 0; i < actors.size; i++) {
+            Bricks temp = (Bricks) actors.get(i);
+            crash(temp.getX(), temp.getY(), temp.getWidth(), temp.getHeight(),temp.getFriction());
+        }
+    }
+
+    public void crash(float x, float y, float width, float height,float friction) {
+
+
+
+        if ((getX() + getWidth() < x || x + width < getX() || getY() + getHeight() < y || y + height < getY())){
+            jumpStatus=1;
+            return;
+        }
+
+//        if (getX()<=x){   // target on left
+//            if (getX()+getWidth()>=x) setX(x-getWidth());
 //        }
-//        if (getX()>x){   // target on right
-//            if (getX()<x+width) setPosition(x+width,getY());
+//        if (getX()>=x){   // target on right
+//            if (getX()<=x+width) setX(x+width);
 //        }
 
         if (getY() < y) {   // target on left
             jumpHeight = 0;
-            if (getY() + getHeight() > y) setPosition(getX(), y - getHeight());
+            if (getY() + getHeight() > y) setY(y - getHeight());
 
         }
         if (getY() > y) {   // target on right
             jumpHeight = 400;
-            dropStatus=0;
-//            setRegion(splitAnim[0][0]);
-            if (getY() < y + height) setPosition(getX(), y + height);
-
+            dropStatus = 0;
+            if (getY() < y + height) setY(y + height);
+            f=friction;
         }
+
     }
+
+
 
     /**
      * 绘制演员

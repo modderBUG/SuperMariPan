@@ -1,26 +1,17 @@
 package com.wxw.mario.entity;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class Bricks extends Actor {
+public class IceBricks extends Actor {
 
     // 用于展示该演员的纹理区域
     private TextureRegion region;
 
-    private Float friction = 0.05f;
+    private Float f = 0.01f;
 
-    public Float getFriction() {
-        return friction;
-    }
-
-    public void setFriction(Float friction) {
-        this.friction = friction;
-    }
-
-    public Bricks(TextureRegion region) {
+    public IceBricks(TextureRegion region) {
         super();
         this.region = region;
         // 将演员的宽高设置为纹理区域的宽高（必须设置, 否则宽高默认都为 0, 绘制后看不到）
@@ -29,7 +20,7 @@ public class Bricks extends Actor {
 
     }
 
-    public Bricks(TextureRegion region,float x,float y) {
+    public IceBricks(TextureRegion region, float x, float y) {
         super();
         this.region = region;
         // 将演员的宽高设置为纹理区域的宽高（必须设置, 否则宽高默认都为 0, 绘制后看不到）
