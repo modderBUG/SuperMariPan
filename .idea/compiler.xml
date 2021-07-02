@@ -6,8 +6,14 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="FlappyBird.core" target="1.7" />
+      <module name="FlappyBird.core.main" target="1.7" />
+      <module name="FlappyBird.core.test" target="1.7" />
       <module name="FlappyBird.desktop" target="1.7" />
+      <module name="FlappyBird.desktop.main" target="1.7" />
+      <module name="FlappyBird.desktop.test" target="1.7" />
       <module name="FlappyBird.html" target="1.7" />
+      <module name="FlappyBird.html.main" target="1.7" />
+      <module name="FlappyBird.html.test" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -37,7 +37,7 @@ public class MarioScreen implements Screen {
     Group playerGroup;
     Player playerA;
     Stage BricksStage = new Stage();
-    Stage BricksStage2 = new Stage();
+
 
 
     public MarioScreen(final Mario gam, final AssetManager manager,final OrthographicCamera camera0) {
@@ -95,9 +95,9 @@ public class MarioScreen implements Screen {
         Bricks temp1 = new Bricks(sceneryTextureRegion, 340, 120);
         Bricks temp2 = new Bricks(sceneryTextureRegion, 360, 180);
 
-        BricksStage2.addActor(temp);
-        BricksStage2.addActor(temp1);
-        BricksStage2.addActor(temp2);
+        BricksStage.addActor(temp);
+        BricksStage.addActor(temp1);
+        BricksStage.addActor(temp2);
 
     }
 
@@ -116,12 +116,12 @@ public class MarioScreen implements Screen {
 
         playerA.handle();
         playerA.crash(BricksStage);
-        playerA.crash(BricksStage2);
+
 
 
         playerA.draw(game.batch, 50);
         BricksStage.draw();
-        BricksStage2.draw();
+
 
         game.batch.end();
 

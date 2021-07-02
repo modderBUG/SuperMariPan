@@ -29,7 +29,7 @@ public class Player extends Actor {
 
     public Float maxDropSpeed = -15f;
     public Float currentDropSpeed = -1f;
-    public Float gravity = 0.98f;
+    public Float gravity = 0.098f;
 
 
     public Float maxSpeed = 3f;
@@ -71,14 +71,13 @@ public class Player extends Actor {
 
     }
 
-    private void init(){
+    private void init() {
         setPosition(400, 480);
     }
 
     public TextureRegion getRegion() {
         return region;
     }
-
 
 
     public void setRegion(TextureRegion region) {
@@ -100,87 +99,87 @@ public class Player extends Actor {
 
 
     // 走路摩擦
-    public void computeCurrent(){
-        if (currentSpeed>0.05) {
-            currentSpeed=currentSpeed  - f;
+    public void computeCurrent() {
+        if (currentSpeed > 0.05) {
+            currentSpeed = currentSpeed - f;
             setX(getX() + currentSpeed);
-            if (currentSpeed>0.5&&direction=='L')
+            if (currentSpeed > 0.5 && direction == 'L')
                 setRegion(splitAnim[0][4]);
             return;
         }
-        if (currentSpeed<-0.05) {
+        if (currentSpeed < -0.05) {
             currentSpeed = currentSpeed + f;
             setX(getX() + currentSpeed);
-            if (currentSpeed<-0.5&&direction=='R'){
+            if (currentSpeed < -0.5 && direction == 'R') {
                 setRegion(getFlip(splitAnim[0][4]));
             }
             return;
         }
-        if (direction=='R')
+        if (direction == 'R')
             setRegion(splitAnim[0][0]);
-        if (direction=='L')
+        if (direction == 'L')
             setRegion(getFlip(splitAnim[0][0]));
     }
 
-    public TextureRegion getFlip(TextureRegion textureRegion){
+    public TextureRegion getFlip(TextureRegion textureRegion) {
         TextureRegion flipTextureRegion = new TextureRegion(textureRegion);
-        flipTextureRegion.flip(true,false);
+        flipTextureRegion.flip(true, false);
         return flipTextureRegion;
     }
 
-    public void setToCurrentSpeed(){
-        if (direction=='R'){
-            if (maxSpeed>currentSpeed)
+    public void setToCurrentSpeed() {
+        if (direction == 'R') {
+            if (maxSpeed > currentSpeed)
                 currentSpeed = currentSpeed + accelerate;
-            if (maxSpeed<currentSpeed)
+            if (maxSpeed < currentSpeed)
                 currentSpeed = currentSpeed - accelerate;
-            setX(getX()+currentSpeed);
+            setX(getX() + currentSpeed);
         }
 
-        if (direction=='L'){
-            if (maxSpeed<currentSpeed)
+        if (direction == 'L') {
+            if (maxSpeed < currentSpeed)
                 currentSpeed = currentSpeed - accelerate;
-            if (maxSpeed>currentSpeed)
+            if (maxSpeed > currentSpeed)
                 currentSpeed = currentSpeed + accelerate;
-            setX(getX()+currentSpeed);
+            setX(getX() + currentSpeed);
         }
     }
 
     public void moveRight() {
         playMoveAnimation(false);
-        direction='R';
-        maxSpeed=1f;
+        direction = 'R';
+        maxSpeed = 1f;
         setToCurrentSpeed();
 
     }
 
     public void runRight() {
         playMoveAnimation(false);
-        direction='R';
-        maxSpeed=3f;
+        direction = 'R';
+        maxSpeed = 3f;
         setToCurrentSpeed();
 
     }
 
     public void moveLeft() {
         playMoveAnimation(true);
-        direction='L';
-        maxSpeed=-1f;
+        direction = 'L';
+        maxSpeed = -1f;
         setToCurrentSpeed();
 
     }
 
     public void runLeft() {
         playMoveAnimation(true);
-        direction='L';
-        maxSpeed=-3f;
+        direction = 'L';
+        maxSpeed = -3f;
         setToCurrentSpeed();
     }
 
-    public void playMoveAnimation(boolean flip){
+    public void playMoveAnimation(boolean flip) {
         stateTime += Gdx.graphics.getDeltaTime();
         // 根据当前 播放模式 获取当前关键帧, 就是在 stateTime 这个时刻应该播放哪一帧
-        TextureRegion  currentFrame = new TextureRegion((TextureRegion) walkAnimation.getKeyFrame(stateTime));
+        TextureRegion currentFrame = new TextureRegion((TextureRegion) walkAnimation.getKeyFrame(stateTime));
         currentFrame.flip(flip, false);
         setRegion(currentFrame);
 
@@ -189,7 +188,6 @@ public class Player extends Actor {
 
     public void jump() {
         setRegion(splitAnim[0][5]);
-        dropStatus = 1;
         jumpHeight -= jumpHeight * 0.1;
         if (jumpHeight <= 0) return;
         setY(getY() + jumpHeight * 0.1f);
@@ -197,7 +195,6 @@ public class Player extends Actor {
 
     public void runJump() {
         setRegion(splitAnim[0][5]);
-        dropStatus = 1;
         jumpHeight -= jumpHeight * 0.1;
         if (jumpHeight <= 0) return;
         setY(getY() + jumpHeight * 0.12f);
@@ -209,7 +206,7 @@ public class Player extends Actor {
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
                 runRight();
             else
-               moveRight();
+                moveRight();
         }
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
@@ -226,60 +223,59 @@ public class Player extends Actor {
         }
 
 
-
-        drop();
         computeCurrent();
+        drop();
 
-        if (getX()<=20)
+        if (getX() <= 20)
             init();
 
-        if (getX()>=Gdx.graphics.getWidth())
+        if (getX() >= Gdx.graphics.getWidth())
             setX(0);
 
-        if (getY()<0)
+        if (getY() < 0)
             init();
     }
 
     public void drop() {
-        if (dropStatus == 0) {
+
+        if (currentDropSpeed==0)
             return;
-        }
-        if (currentDropSpeed>maxDropSpeed)
+
+        if (currentDropSpeed > maxDropSpeed)
             currentDropSpeed = currentDropSpeed - gravity;
-        float Y_ = getY()+currentDropSpeed;
-        setRegion(splitAnim[0][5]);
+        float Y_ = getY() + currentDropSpeed;
+
+        if (currentDropSpeed<=-2)
+            setRegion(splitAnim[0][5]);
         setY(Y_);
     }
 
-   public void   jumping(){
+    public void jumping() {
 
     }
 
 
-
-    public void crash(Stage stage){
+    public void crash(Stage stage) {
         Array<Actor> actors = stage.getActors();
         for (int i = 0; i < actors.size; i++) {
             Bricks temp = (Bricks) actors.get(i);
-            crash(temp.getX(), temp.getY(), temp.getWidth(), temp.getHeight(),temp.getFriction());
+            crash(temp.getX(), temp.getY(), temp.getWidth(), temp.getHeight(), temp.getFriction());
         }
     }
 
-    public void crash(float x, float y, float width, float height,float friction) {
+    public void crash(float x, float y, float width, float height, float friction) {
+        if ((getX() + getWidth() <= x || x + width <= getX() || getY() + getHeight() <= y || y + height < getY())) {
 
-
-
-        if ((getX() + getWidth() < x || x + width < getX() || getY() + getHeight() < y || y + height < getY())){
-            jumpStatus=1;
+            if (currentDropSpeed==0) currentDropSpeed=-1f;
             return;
         }
 
-//        if (getX()<=x){   // target on left
-//            if (getX()+getWidth()>=x) setX(x-getWidth());
-//        }
-//        if (getX()>=x){   // target on right
-//            if (getX()<=x+width) setX(x+width);
-//        }
+//            if (getX() < x) {   // target on left
+//                if (getX() + getWidth() > x) setX(x - getWidth());
+//            }
+//            if (getX() > x) {   // target on right
+//                if (getX() < x + width) setX(x + width);
+//            }
 
         if (getY() < y) {   // target on left
             jumpHeight = 0;
@@ -288,13 +284,13 @@ public class Player extends Actor {
         }
         if (getY() > y) {   // target on right
             jumpHeight = 400;
-            dropStatus = 0;
             if (getY() < y + height) setY(y + height);
-            f=friction;
+            currentDropSpeed = 0f;
+            f = friction;
         }
 
-    }
 
+    }
 
 
     /**
