@@ -11,7 +11,6 @@ public class MarioMenu implements Screen {
 
     final Mario game;
     OrthographicCamera camera;
-
     AssetManager manager = new AssetManager();
 
     public MarioMenu(final Mario gam) {
@@ -65,5 +64,6 @@ public class MarioMenu implements Screen {
 
     @Override
     public void dispose() {
+
     }
 }

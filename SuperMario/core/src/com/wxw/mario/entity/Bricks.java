@@ -10,7 +10,16 @@ public class Bricks extends Actor {
     // 用于展示该演员的纹理区域
     private TextureRegion region;
 
+    // 摩擦系数
     private Float friction = 0.05f;
+
+    // 砖块种类
+    private BricksType bricksType = BricksType.BRICKS;
+
+    // 硬度
+    private int hardness = 2;
+
+
 
     public Float getFriction() {
         return friction;
@@ -26,17 +35,41 @@ public class Bricks extends Actor {
         // 将演员的宽高设置为纹理区域的宽高（必须设置, 否则宽高默认都为 0, 绘制后看不到）
         setSize(region.getRegionWidth(), region.getRegionHeight());
         setPosition(400, 480);
-
     }
 
-    public Bricks(TextureRegion region,float x,float y) {
+    public Bricks(TextureRegion region, float x, float y) {
         super();
         this.region = region;
         // 将演员的宽高设置为纹理区域的宽高（必须设置, 否则宽高默认都为 0, 绘制后看不到）
         setSize(region.getRegionWidth(), region.getRegionHeight());
         setPosition(x, y);
-
     }
+
+    public Bricks(TextureRegion region, float x, float y,BricksType bricksType,int hardness,Float friction) {
+        super();
+        this.region = region;
+        this.bricksType =bricksType;
+        this.hardness =hardness;
+        this.friction =friction;
+        // 将演员的宽高设置为纹理区域的宽高（必须设置, 否则宽高默认都为 0, 绘制后看不到）
+        setSize(region.getRegionWidth(), region.getRegionHeight());
+        setPosition(x, y);
+    }
+
+    public BricksType getBricksType() {
+        return bricksType;
+    }
+
+
+
+    public int getHardness() {
+        return hardness;
+    }
+
+    public void setRegion(TextureRegion region) {
+        this.region = region;
+    }
+
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
