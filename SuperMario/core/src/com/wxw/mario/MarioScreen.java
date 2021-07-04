@@ -27,7 +27,7 @@ public class MarioScreen implements Screen {
     final Mario game;
     final OrthographicCamera camera;
     final AssetManager manager;
-    final TexturePositions texturePositions ;
+//    final TexturePositions texturePositions ;
 
     Texture playerTexture;     //= new Texture(Gdx.files.internal("mario/PlayerAtlas.png"));
     Texture armyTexture;       //= new Texture(Gdx.files.internal("mario/ArmyAtlas.png"));
@@ -66,7 +66,7 @@ public class MarioScreen implements Screen {
 
     public MarioScreen(final Mario gam, final AssetManager manager,final OrthographicCamera camera0) {
         this.manager = manager;
-        texturePositions = new TexturePositions(manager);
+//        texturePositions = new TexturePositions(manager);
 
         game = gam;
 
@@ -95,16 +95,16 @@ public class MarioScreen implements Screen {
         cloudBrickTextureRegion[1] = new TextureRegion(sceneryTexture, 48, 32, 16, 16);
         cloudBrickTextureRegion[2] = new TextureRegion(sceneryTexture, 48, 48, 16, 16);
 
-        coinBrickTextureRegion[0] = new TextureRegion(sceneryTexture, 48, 16, 16, 16);
-        coinBrickTextureRegion[1] = new TextureRegion(sceneryTexture, 48, 64, 16, 16);
+        coinBrickTextureRegion[0] = new TextureRegion(sceneryTexture, 48, 16, 16, 16 );
+        coinBrickTextureRegion[1] = new TextureRegion(sceneryTexture, 48, 64, 16, 16 );
         coinBrickTextureRegion[2] = new TextureRegion(sceneryTexture, 48, 128, 16, 16);
         coinBrickTextureRegion[3] = new TextureRegion(sceneryTexture, 48, 176, 16, 16);
 
         glassBrickTextureRegion[0] = new TextureRegion(sceneryTexture, 112, 192, 24, 16);
-        glassBrickTextureRegion[1] = new TextureRegion(sceneryTexture, 112, 80, 24, 16);
+        glassBrickTextureRegion[1] = new TextureRegion(sceneryTexture, 112, 80, 24, 16  );
 
 
-        playerA = new Player(playerTextureRegion,texturePositions);
+        playerA = new Player(playerTextureRegion,manager);
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -113,6 +113,7 @@ public class MarioScreen implements Screen {
         // Height is multiplied by aspect ratio.
 //        camera = new OrthographicCamera();
 //        camera.setToOrtho(false, 40, 50);
+        
 
         this.camera = camera0;
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
@@ -124,19 +125,19 @@ public class MarioScreen implements Screen {
 
 
         for (int i = 0; i < 20; i++) {
-            Bricks temp = new Bricks(bricksTextureRegion[2]);
+            Bricks temp = new Bricks(manager,bricksTextureRegion[2]);
             temp.setPosition(i * 16 , 0);
-            Bricks temp2 = new Bricks(bricksTextureRegion[2]);
+            Bricks temp2 = new Bricks(manager,bricksTextureRegion[2]);
             temp2.setPosition(i * 16 , 16);
             bricksGroup.addActor(temp);
             bricksGroup.addActor(temp2);
 
         }
         for (int i = 20; i < 40; i++) {
-            Bricks temp = new Bricks(bricksTextureRegion[1]);
+            Bricks temp = new Bricks(manager,bricksTextureRegion[1]);
             temp.setFriction(0.01f);
             temp.setPosition(i * 16  , 0);
-            Bricks temp2 = new Bricks(bricksTextureRegion[1]);
+            Bricks temp2 = new Bricks(manager,bricksTextureRegion[1]);
             temp2.setFriction(0.01f);
             temp2.setPosition(i * 16 , 16);
             bricksGroup.addActor(temp);
@@ -145,14 +146,14 @@ public class MarioScreen implements Screen {
 
 
 
-        Bricks temp = new Bricks(bricksTextureRegion[0], 300, 80, BricksType.BRICKS,0,0.05f);
-        Bricks temp1 = new Bricks(bricksTextureRegion[0], 340, 120, BricksType.BRICKS,0,0.05f);
-        Bricks temp2 = new Bricks(bricksTextureRegion[0], 360, 180, BricksType.BRICKS,0,0.05f);
+        Bricks temp = new Bricks(manager,bricksTextureRegion[0], 300, 80, BricksType.BRICKS,0,0.05f);
+        Bricks temp1 = new Bricks(manager,bricksTextureRegion[0], 340, 120, BricksType.BRICKS,0,0.05f);
+        Bricks temp2 = new Bricks(manager,bricksTextureRegion[0], 360, 180, BricksType.BRICKS,0,0.05f);
 
 
-        Bricks temp3 = new Bricks(giftTextureRegion, 360, 100, BricksType.GIFT,2,0.05f);
-        Bricks temp4 = new Bricks(giftTextureRegion, 360+16, 100, BricksType.REWARDED,2,0.05f);
-        Bricks temp5 = new Bricks(giftTextureRegion, 360+16*2, 100, BricksType.GIFT,2,0.05f);
+        Bricks temp3 = new Bricks(manager,giftTextureRegion, 360, 100, BricksType.GIFT,2,0.05f);
+        Bricks temp4 = new Bricks(manager,giftTextureRegion, 360+16, 100, BricksType.REWARDED,2,0.05f);
+        Bricks temp5 = new Bricks(manager,giftTextureRegion, 360+16*2, 100, BricksType.GIFT,2,0.05f);
 
         bricksGroup.addActor(temp);
         bricksGroup.addActor(temp1);
@@ -164,22 +165,22 @@ public class MarioScreen implements Screen {
 
         bricksStage.addActor(bricksGroup);
 
-        sceneryStage.addActor(new Bricks(mountainTextureRegion[0],100,32));
-        sceneryStage.addActor(new Bricks(mountainTextureRegion[1],150,32));
-        sceneryStage.addActor(new Bricks(mountainTextureRegion[0],250,32));
+        sceneryStage.addActor(new Bricks(manager,mountainTextureRegion[0],100,32));
+        sceneryStage.addActor(new Bricks(manager,mountainTextureRegion[1],150,32));
+        sceneryStage.addActor(new Bricks(manager,mountainTextureRegion[0],250,32));
 
-        sceneryStage.addActor(new Bricks(cloudBrickTextureRegion[0],250,350));
-        sceneryStage.addActor(new Bricks(cloudBrickTextureRegion[1],266,350));
-        sceneryStage.addActor(new Bricks(cloudBrickTextureRegion[2],278,350));
+        sceneryStage.addActor(new Bricks(manager,cloudBrickTextureRegion[0],250,350));
+        sceneryStage.addActor(new Bricks(manager,cloudBrickTextureRegion[1],266,350));
+        sceneryStage.addActor(new Bricks(manager,cloudBrickTextureRegion[2],278,350));
 
-        sceneryStage.addActor(new Bricks(cloudBrickTextureRegion[0],300,380));
-        sceneryStage.addActor(new Bricks(cloudBrickTextureRegion[1],316,380));
-        sceneryStage.addActor(new Bricks(cloudBrickTextureRegion[2],332,380));
+        sceneryStage.addActor(new Bricks(manager,cloudBrickTextureRegion[0],300,380));
+        sceneryStage.addActor(new Bricks(manager,cloudBrickTextureRegion[1],316,380));
+        sceneryStage.addActor(new Bricks(manager,cloudBrickTextureRegion[2],332,380));
 
 
-        sceneryStage.addActor(new Bricks(cloudTextureRegion,200,350));
+        sceneryStage.addActor(new Bricks(manager,cloudTextureRegion,200,350));
 
-        sceneryStage.addActor(new Bricks(cloudTextureRegion,400,250));
+        sceneryStage.addActor(new Bricks(manager,cloudTextureRegion,400,250));
 
 
     }
@@ -206,6 +207,7 @@ public class MarioScreen implements Screen {
         playerA.drawAnimation(game.batch);
         bricksStage.draw();
 
+        game.font.draw(game.batch, "Score : "+playerA.getScore(), 20, 150);
 
 
         game.batch.end();

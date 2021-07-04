@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.*;
 import com.badlogic.gdx.utils.Array;
+import com.wxw.mario.ResourceName;
+import com.wxw.mario.texture.ResourcePosition;
 import com.wxw.mario.texture.TexturePositions;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,17 +27,17 @@ import java.util.LinkedList;
 
 public class Player extends Actor {
 
+    AssetManager manager;
+
     Rectangle playerRectangle ;
 
     // 用于展示该演员的纹理区域
     private TextureRegion region;
     private TextureRegion[][] splitAnim;
 
-    private int statusX = 0;
 
     public int jumpStatus = 0;
-    public int jumpHeight = 50;
-
+    public int jumpV0 = 3;
 
     public Float maxDropSpeed = -15f;
     public Float currentDropSpeed = -1f;
@@ -46,8 +50,10 @@ public class Player extends Actor {
     public Float f = 0.05f;
     public char direction = 'R';
 
-    private TextureRegion jumpTextureRegion;
-    private TextureRegion squatTextureRegion;
+    private long score = 0;
+
+    private final TextureRegion jumpTextureRegion;
+    private final TextureRegion squatTextureRegion;
 
     private Animation walkAnimation;
     private Animation runAnimation;
@@ -55,9 +61,6 @@ public class Player extends Actor {
 
     float stateTime;
 
-    TexturePositions texturePositions;
-
-//    LinkedList<Animation<TextureRegion>>
 
     public void setWalkAnimation(TextureRegion[][] splitAnim) {
         TextureRegion[] walkRegion = new TextureRegion[3];
@@ -108,9 +111,9 @@ public class Player extends Actor {
 
     }
 
-    public Player(TextureRegion region,TexturePositions texturePositions){
+    public Player(TextureRegion region,final AssetManager manager){
         this( region);
-        this.texturePositions =texturePositions;
+        this.manager = manager;
     }
 
 
@@ -323,11 +326,17 @@ public class Player extends Actor {
             boolean crashed = crash(temp.getX(), temp.getY(), temp.getWidth(), temp.getHeight(), temp.getFriction());
             if (crashed) {
 
-                if (temp.getBricksType()==BricksType.GIFT)  //do;
-                    temp.setRegion(texturePositions.getEnemyRegion(texturePositions.rewardTextureRegion));
+                if (temp.getBricksType()==BricksType.GIFT) {
+                    temp.changeTexture(ResourcePosition.GiftAcquired, true);
+                    score+=1;
+                }
 
-                if (temp.getBricksType()==BricksType.REWARDED)  //do;
-                    temp.setRegion(texturePositions.getEnemyRegion(texturePositions.Reward25TextureRegion));
+                if (temp.getBricksType()==BricksType.REWARDED) {
+                    temp.activateBrick();
+                    score+=1;
+//                    temp.changeTexture(ResourcePosition.Rewarded);
+                }
+
 
                 if (temp.getHardness()<2)
                     stage.removeActor(temp);
@@ -373,6 +382,10 @@ public class Player extends Actor {
 
     }
 
+    public long getScore() {
+        return score;
+    }
+
     /**
      * 绘制演员
      *
@@ -411,6 +424,9 @@ public class Player extends Actor {
                 getScaleX(), getScaleY(),
                 getRotation()
         );
+
+
+
     }
 
 }
