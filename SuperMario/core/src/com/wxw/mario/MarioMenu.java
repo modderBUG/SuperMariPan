@@ -11,13 +11,13 @@ import com.wxw.mario.texture.ResourceName;
 public class MarioMenu implements Screen {
 
     final Mario game;
-    OrthographicCamera camera;
-    AssetManager manager = new AssetManager();
+    final OrthographicCamera camera;
+    final AssetManager manager = new AssetManager();
 
     public MarioMenu(final Mario gam) {
         game = gam;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
+        camera.setToOrtho(false, 320, 160);
 
         manager.load(ResourceName.ENEMY, Texture.class);
         manager.load(ResourceName.PLAYER,Texture.class);
@@ -38,7 +38,7 @@ public class MarioMenu implements Screen {
         game.batch.end();
 
         if (Gdx.input.isTouched()) {
-            game.setScreen(new MarioScreen(game,manager,camera));
+            game.setScreen(new MarioScreen(game,manager));
             dispose();
         }
     }

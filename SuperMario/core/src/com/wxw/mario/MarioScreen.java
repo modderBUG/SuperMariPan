@@ -3,13 +3,18 @@ package com.wxw.mario;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.wxw.mario.brick.Bricks;
 import com.wxw.mario.brick.BricksType;
 import com.wxw.mario.actor.Player;
@@ -20,32 +25,31 @@ import com.wxw.mario.texture.ResourcePosition;
 public class MarioScreen implements Screen {
 
     final Mario game;
-    final OrthographicCamera camera;
+    private Viewport viewport;
+    private Camera camera;
     final AssetManager manager;
 
     Group playerGroup   = new Group();
     Group enemyGroup    =  new Group();
-    Stage playerStage   = new Stage();
+    Stage playerStage   ;
 
     Group bricksGroup   = new Group();
-    Stage bricksStage   = new Stage();
+    Stage bricksStage  ;
 
-    Stage sceneryStage = new Stage();
+    Stage sceneryStage ;
 
-    public MarioScreen(final Mario gam, final AssetManager manager,final OrthographicCamera camera0) {
+    public MarioScreen(final Mario gam, final AssetManager manager) {
         this.manager = manager;
         this.game = gam;
 
+        camera = new PerspectiveCamera();
+        viewport = new FitViewport(800, 480);
+        playerStage = new Stage(viewport);
         playerGroup.addActor(new Player(manager,ResourcePosition.PLAYER_MARIO));
         playerStage.addActor(playerGroup);
 
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
-
-        this.camera = camera0;
-        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
-        camera.update();
-
+        sceneryStage = new Stage(viewport);
+        bricksStage  = new Stage(viewport);
 
         for (int i = 0; i < 20; i++) {
             Bricks temp = new Bricks(manager,ResourcePosition.GroundBricks);
@@ -96,7 +100,6 @@ public class MarioScreen implements Screen {
         sceneryStage.addActor(new Blocks(manager, ResourcePosition.Cloud,200,350));
         sceneryStage.addActor(new Blocks(manager, ResourcePosition.Cloud,400,250));
 
-
     }
 
 
@@ -107,10 +110,12 @@ public class MarioScreen implements Screen {
 
     @Override
     public void render(float delta) {
+
+        ScreenUtils.clear(0.467f,0.894f,1f, 1);
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
-        ScreenUtils.clear(0.467f,0.894f,1f, 1);
         game.batch.begin();
+
 
         for (Actor actor:playerGroup.getChildren()) {
             Player player = (Player) actor;
@@ -119,10 +124,27 @@ public class MarioScreen implements Screen {
             game.font.draw(game.batch, "Score : "+player.getScore(), player.getX(), Gdx.graphics.getHeight()-50);
         }
 
+        for (Actor player:playerGroup.getChildren()) {
+            if (player.getX()>400){
+                float moveX = player.getX()-400;
+
+                for (Actor a:bricksGroup.getChildren()) {
+                    a.setX(a.getX()-0.1f);
+                }
+
+                for (Actor a:sceneryStage.getActors()) {
+                    a.setX(a.getX()-.1f);
+                }
+                break;
+            }
+        }
+
+
+
+
         sceneryStage.draw();
         playerStage .draw();
         bricksStage .draw();
-
         game.batch.end();
 
     }
@@ -130,9 +152,7 @@ public class MarioScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        camera.viewportWidth = 30f;
-        camera.viewportHeight = 30f * height / width;
-        camera.update();
+        viewport.update(width, height);
     }
 
     @Override
