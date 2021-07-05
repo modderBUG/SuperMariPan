@@ -1,4 +1,4 @@
-package com.wxw.mario;
+package com.wxw.mario.texture;
 /*
  * @author: wuxiaowei(wuxiaowei_a@aspirecn.com)
  * @create: 2021-06-29 16:49
