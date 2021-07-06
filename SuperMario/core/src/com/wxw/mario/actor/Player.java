@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Array;
+import com.wxw.mario.animation.CoinAnim;
 import com.wxw.mario.brick.Bricks;
 import com.wxw.mario.brick.BricksType;
 import com.wxw.mario.texture.ResourceName;
@@ -341,6 +342,7 @@ public class Player extends Actor {
 
 
                 if (temp.getBricksType() == BricksType.GIFT) {
+                    temp.getStage().addActor(new CoinAnim(manager,temp.getX(),temp.getY()));
                     temp.crashedByPlayer();
                     score += 1;
                 }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.wxw.mario.animation.CoinAnim;
 import com.wxw.mario.texture.ResourceName;
 import com.wxw.mario.texture.ResourcePosition;
 
@@ -58,6 +59,7 @@ public class GiftBricks extends Bricks {
         }
 
         if (getBricksType()==BricksType.GIFT||getBricksType()==BricksType.REWARDED){
+            getStage().addActor(new CoinAnim(manager,getX(),getY()+getHeight()));
             sound = manager.get(ResourceName.Coin);
             sound.play();
         }

@@ -179,6 +179,9 @@ public class MarioScreen implements Screen {
         }
 
 
+        sceneryStage.act();
+        bricksStage.act();
+        playerStage.act();
 
 
         sceneryStage.draw();
