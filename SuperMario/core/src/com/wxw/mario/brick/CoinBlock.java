@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.wxw.mario.scenery.Blocks;
+import com.wxw.mario.texture.ResourceName;
 import com.wxw.mario.texture.ResourcePosition;
 
 public class CoinBlock extends Bricks {
@@ -44,8 +45,12 @@ public class CoinBlock extends Bricks {
         coinAnimation.setPlayMode(Animation.PlayMode.LOOP);
     }
 
-
-
+    @Override
+    public void crashedByPlayer() {
+        super.crashedByPlayer();
+        sound = manager.get(ResourceName.Coin);
+        sound.play();
+    }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {

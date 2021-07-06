@@ -3,6 +3,8 @@ package com.wxw.mario.actor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -52,6 +54,8 @@ public class Player extends Actor {
     private Animation jumpAnimation;
 
     float stateTime;
+
+    Music sound;
 
 
     public void setWalkAnimation(TextureRegion[][] splitAnim) {
@@ -117,6 +121,7 @@ public class Player extends Actor {
         setPosition(400, 400);
         playerRectangle = new Rectangle(getX(), getY(), getWidth(), getHeight());
         setPosition(400, 400);
+
     }
 
 
@@ -288,6 +293,8 @@ public class Player extends Actor {
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            sound = manager.get(ResourceName.Jump);
+            sound.play();
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
                 runJump();
             else
@@ -339,6 +346,7 @@ public class Player extends Actor {
                 }
 
                 if (temp.getBricksType() == BricksType.COIN) {
+                    temp.crashedByPlayer();
                     stage.removeActor(temp);
                     score += 1;
                 }
@@ -346,12 +354,20 @@ public class Player extends Actor {
                 if (temp.getBricksType() == BricksType.REWARDED) {
                     temp.crashedByPlayer();
                     score += 1;
-//                    temp.changeTexture(ResourcePosition.Rewarded);
+                }
+
+                if (temp.getBricksType() == BricksType.GROUND) {
+                    temp.crashedByPlayer();
                 }
 
 
-                if (temp.getHardness() < 2)
-                    stage.removeActor(temp);
+                if (temp.getBricksType() == BricksType.BRICKS) {
+                    temp.crashedByPlayer();
+                    if (temp.getHardness() < 2)
+                        stage.removeActor(temp);
+                }
+
+
             }
 
 

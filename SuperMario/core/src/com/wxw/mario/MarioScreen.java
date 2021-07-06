@@ -3,6 +3,7 @@ package com.wxw.mario;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -40,11 +41,15 @@ public class MarioScreen implements Screen {
 
     Stage sceneryStage ;
 
+    Music BGM ;
+
     public MarioScreen(final Mario gam, final AssetManager manager) {
         this.manager = manager;
         this.game = gam;
+        BGM = manager.get(ResourceName.Stage01_BGM);
+        BGM.setLooping(true);
+        BGM.play();
 
-//        camera = new PerspectiveCamera();
         viewport = new FitViewport(800, 480);
         camera = viewport.getCamera();
         playerStage = new Stage(viewport);

@@ -6,6 +6,7 @@ package com.wxw.mario.scenery;
  */
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -18,6 +19,7 @@ public class Blocks extends Actor {
     final AssetManager manager;
     final Texture sceneryTexture;
     TextureRegion region;
+    Sound sound;
 
     public Blocks(final AssetManager manager, ResourcePosition rect, float x, float y) {
         super();

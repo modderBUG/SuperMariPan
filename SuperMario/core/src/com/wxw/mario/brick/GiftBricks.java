@@ -56,6 +56,12 @@ public class GiftBricks extends Bricks {
             changeTexture(ResourcePosition.Rewarded);
             timer = System.currentTimeMillis();
         }
+
+        if (getBricksType()==BricksType.GIFT||getBricksType()==BricksType.REWARDED){
+            sound = manager.get(ResourceName.Coin);
+            sound.play();
+        }
+
     }
 
     @Override

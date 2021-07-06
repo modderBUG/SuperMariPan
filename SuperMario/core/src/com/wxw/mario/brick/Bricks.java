@@ -1,6 +1,7 @@
 package com.wxw.mario.brick;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -29,7 +30,7 @@ public class Bricks extends Actor {
     AssetManager manager;
     Texture sceneryTexture;
 
-
+    Sound sound;
 
 
     public Bricks(final AssetManager manager, float x, float y, BricksType bricksType, ResourcePosition rect, int hardness, Float friction) {
@@ -64,8 +65,19 @@ public class Bricks extends Actor {
         if (bricksType==BricksType.GIFT){
             bricksType = BricksType.GROUND;
             changeTexture(ResourcePosition.GiftAcquired,true);
+            sound = manager.get(ResourceName.Coin);
+            sound.play();
         }
 
+        if (bricksType==BricksType.BRICKS){
+            sound = manager.get(ResourceName.Break_Bricks);
+            sound.play();
+        }
+
+        if (bricksType==BricksType.GROUND && hardness>1){
+            sound = manager.get(ResourceName.Crashed_Bricks);
+            sound.play();
+        }
     }
 
     public Float getFriction() {

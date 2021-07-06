@@ -3,6 +3,8 @@ package com.wxw.mario;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -22,6 +24,15 @@ public class MarioMenu implements Screen {
         manager.load(ResourceName.ENEMY, Texture.class);
         manager.load(ResourceName.PLAYER,Texture.class);
         manager.load(ResourceName.SCAN,Texture.class);
+
+        manager.load(ResourceName.Stage01_BGM, Music.class);
+        manager.load(ResourceName.Jump, Music.class);
+        manager.load(ResourceName.Coin, Sound.class);
+        manager.load(ResourceName.Break_Bricks, Sound.class);
+        manager.load(ResourceName.Crashed_Bricks, Sound.class);
+
+
+
         manager.finishLoading();
     }
 
