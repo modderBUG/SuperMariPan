@@ -33,6 +33,9 @@ public class Blocks extends Actor {
         this.region = region;
         setSize(region.getRegionWidth(), region.getRegionHeight());
     }
+    public TextureRegion getResource(ResourcePosition rect){
+        return new TextureRegion(sceneryTexture,rect.getX(),rect.getY(),rect.getWidth(),rect.getHeight());
+    }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {

@@ -21,7 +21,7 @@ public class Player extends Actor {
 
     final AssetManager manager;
 
-    Rectangle playerRectangle ;
+    Rectangle playerRectangle;
 
     private Texture playerTexture;
     private TextureRegion region;
@@ -82,14 +82,29 @@ public class Player extends Actor {
     }
 
 
-
-
-
-    public Player(final AssetManager manager,ResourcePosition rect){
+    public Player(final AssetManager manager, ResourcePosition rect,Float x,Float y) {
         super();
         this.manager = manager;
-        playerTexture  = manager.get(ResourceName.PLAYER);
-        TextureRegion playerTextureRegion = new TextureRegion(playerTexture,rect.getX(),rect.getY(),rect.getWidth(),rect.getHeight());
+        playerTexture = manager.get(ResourceName.PLAYER);
+        TextureRegion playerTextureRegion = new TextureRegion(playerTexture, rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+        splitAnim = playerTextureRegion.split(17, 32);
+        setWalkAnimation(splitAnim);
+        setRunAnimation(splitAnim);
+        setJumpAnimation(splitAnim);
+        jumpTextureRegion = splitAnim[0][5];
+        squatTextureRegion = splitAnim[0][6];
+        // 将演员的宽高设置为纹理区域的宽高（必须设置, 否则宽高默认都为 0, 绘制后看不到）
+        this.region = splitAnim[0][0];
+        setSize(region.getRegionWidth(), region.getRegionHeight());
+        playerRectangle = new Rectangle(getX(), getY(), getWidth(), getHeight());
+        this.setPosition(x,y);
+    }
+
+    public Player(final AssetManager manager, ResourcePosition rect) {
+        super();
+        this.manager = manager;
+        playerTexture = manager.get(ResourceName.PLAYER);
+        TextureRegion playerTextureRegion = new TextureRegion(playerTexture, rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
         splitAnim = playerTextureRegion.split(17, 32);
         setWalkAnimation(splitAnim);
         setRunAnimation(splitAnim);
@@ -100,7 +115,8 @@ public class Player extends Actor {
         this.region = splitAnim[0][0];
         setSize(region.getRegionWidth(), region.getRegionHeight());
         setPosition(400, 400);
-        playerRectangle = new Rectangle(getX(),getY(),getWidth(),getHeight());
+        playerRectangle = new Rectangle(getX(), getY(), getWidth(), getHeight());
+        setPosition(400, 400);
     }
 
 
@@ -310,22 +326,31 @@ public class Player extends Actor {
         Array<Actor> actors = stage.getChildren();
         for (int i = 0; i < actors.size; i++) {
             Bricks temp = (Bricks) actors.get(i);
-            boolean crashed = crash(temp.getX(), temp.getY(), temp.getWidth(), temp.getHeight(), temp.getFriction());
+
+
+            boolean crashed = crash(temp.getX(), temp.getY(), temp.getWidth(), temp.getHeight(), temp);
+
             if (crashed) {
 
-                if (temp.getBricksType()== BricksType.GIFT) {
-                    temp.changeTexture(ResourcePosition.GiftAcquired, true);
-                    score+=1;
+
+                if (temp.getBricksType() == BricksType.GIFT) {
+                    temp.crashedByPlayer();
+                    score += 1;
                 }
 
-                if (temp.getBricksType()==BricksType.REWARDED) {
-                    temp.activateBrick();
-                    score+=1;
+                if (temp.getBricksType() == BricksType.COIN) {
+                    stage.removeActor(temp);
+                    score += 1;
+                }
+
+                if (temp.getBricksType() == BricksType.REWARDED) {
+                    temp.crashedByPlayer();
+                    score += 1;
 //                    temp.changeTexture(ResourcePosition.Rewarded);
                 }
 
 
-                if (temp.getHardness()<2)
+                if (temp.getHardness() < 2)
                     stage.removeActor(temp);
             }
 
@@ -333,25 +358,29 @@ public class Player extends Actor {
         }
     }
 
-    public boolean crash(float x, float y, float width, float height, float friction) {
+    public boolean crash(float x, float y, float width, float height, Bricks temp) {
 
 //        if ((getX() + getWidth() <= x || x + width <= getX() || getY() + getHeight() <= y || y + height < getY())) {
 //            if (currentDropSpeed == 0) currentDropSpeed = -1f;
 //            return false;
 //        }
 
-        playerRectangle.set(getX(),getY(),getWidth(),getHeight());
+        Float friction = temp.getFriction();
+
+        playerRectangle.set(getX(), getY(), getWidth(), getHeight());
         Rectangle bricks = new Rectangle(x, y, width, height);
         if (!bricks.overlaps(playerRectangle)) {
             if (currentDropSpeed == 0) currentDropSpeed = -1f;
             return false;
         }
 
+        if (temp.getBricksType()==BricksType.COIN)
+            return true;
+
         if (getY() < y) {   // target on left
             currentDropSpeed = 0f;
             if (getY() + getHeight() > y) setY(y - getHeight());
             return true;
-
         }
         if (getY() > y) {   // target on right
             if (getY() < y + height) setY(y + height);
@@ -364,8 +393,8 @@ public class Player extends Actor {
     }
 
 
-    public void drawAnimation(Batch batch){
-        super.draw(batch,1);
+    public void drawAnimation(Batch batch) {
+        super.draw(batch, 1);
 
     }
 

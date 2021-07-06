@@ -2,6 +2,7 @@ package com.wxw.mario.brick;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -23,14 +24,13 @@ public class Bricks extends Actor {
     private int hardness;
 
     // 是否需要对称绘制
-    private boolean symmetry = false;
+    public boolean symmetry = false;
 
     AssetManager manager;
     Texture sceneryTexture;
 
-    // 限时奖励砖块。
-    private long timer = Long.MAX_VALUE;
-    private int bricksStatus = 0;
+
+
 
     public Bricks(final AssetManager manager, float x, float y, BricksType bricksType, ResourcePosition rect, int hardness, Float friction) {
         super();
@@ -41,6 +41,11 @@ public class Bricks extends Actor {
         this.friction = friction;
         changeTexture(rect);
         setPosition(x, y);
+        createAnimation();
+
+    }
+    public void createAnimation(){
+
     }
 
     public Bricks(final AssetManager manager) {
@@ -55,12 +60,25 @@ public class Bricks extends Actor {
         this(manager, x, y, bricksType, ResourcePosition.Bricks, hardness, friction);
     }
 
+    public void crashedByPlayer(){
+        if (bricksType==BricksType.GIFT){
+            bricksType = BricksType.GROUND;
+            changeTexture(ResourcePosition.GiftAcquired,true);
+        }
+
+    }
+
     public Float getFriction() {
         return friction;
     }
 
     public void setFriction(Float friction) {
         this.friction = friction;
+    }
+
+
+    public void setBricksType(BricksType bricksType) {
+        this.bricksType = bricksType;
     }
 
     public BricksType getBricksType() {
@@ -80,6 +98,10 @@ public class Bricks extends Actor {
         setSize(region.getRegionWidth(), region.getRegionHeight());
     }
 
+    public TextureRegion getRegion() {
+        return region;
+    }
+
     public void changeTexture(ResourcePosition rectangle) {
         TextureRegion textureRegion = new TextureRegion(sceneryTexture, rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
         setRegion(textureRegion);
@@ -88,15 +110,11 @@ public class Bricks extends Actor {
     public void changeTexture(ResourcePosition rectangle, boolean symmetry) {
         changeTexture(rectangle);
         this.symmetry = symmetry;
-        bricksType = BricksType.GROUND;
     }
 
-    public void activateBrick() {
-        if (bricksStatus < 1 && bricksType == BricksType.REWARDED) {
-            bricksStatus = 1;
-            changeTexture(ResourcePosition.Rewarded);
-            timer = System.currentTimeMillis();
-        }
+
+    public TextureRegion getResource(ResourcePosition rect){
+        return new TextureRegion(sceneryTexture,rect.getX(),rect.getY(),rect.getWidth(),rect.getHeight());
     }
 
     @Override
@@ -108,32 +126,6 @@ public class Bricks extends Actor {
             return;
         }
 
-        if (bricksStatus == 1) {
-            long end = System.currentTimeMillis();
-            long keepTime = 5000;
-            if (end - timer > keepTime) {
-                bricksType = BricksType.GIFT;
-                bricksStatus = 3;
-            }
-        }
-
-
-
-		/* 这里选择一个较为复杂的绘制方法进行绘制
-		batch.draw(
-				region,
-				x, y,
-				originX, originY,
-				width, height,
-				scaleX, scaleY,
-				rotation
-		);*/
-
-        /*
-         * 绘制纹理区域
-         * 将演员中的 位置(position, 即 X, Y 坐标), 缩放和旋转支点(origin), 宽高尺寸, 缩放比, 旋转角度 应用到绘制中,
-         * 最终 batch 会将综合结果绘制到屏幕上
-         */
         batch.draw(
                 region,
                 getX(), getY(),
@@ -143,17 +135,6 @@ public class Bricks extends Actor {
                 getRotation()
         );
 
-        if (symmetry) {
-            TextureRegion a = new TextureRegion(region);
-            a.flip(true, false);
-            batch.draw(
-                    a,
-                    getX() + 8, getY(),
-                    getOriginX(), getOriginY(),
-                    getWidth(), getHeight(),
-                    getScaleX(), getScaleY(),
-                    getRotation()
-            );
-        }
+
     }
 }

@@ -4,7 +4,8 @@ public enum BricksType {
     BRICKS      (0),
     GIFT        (1),
     REWARDED    (2),
-    GROUND      (3)
+    GROUND      (3),
+    COIN        (4),
 
     ;
 
